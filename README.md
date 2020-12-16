@@ -1,36 +1,25 @@
-# Fahrgastzahlen VBZ interaktiv visualisiert
+# Mobilität in Zürich 2020
 
 ## Projekt
 
-Die Verkehrsbetriebe Zürich erheben die Nutzung ihrer Fahrzeuge auf dem gesamten Verkehrsnetz und publizieren diese Daten als Open Data. Es handelt sich dabei um Extrapolationen, welche auf Zähleinrichtungen in den VBZ-Fahrzeugen und manuellen Zählungen basieren und seit 2015 publiziert werden. Ein Datensatz repräsentiert die Fahrt eines Fahrzeugs zwischen jeweils zwei Haltestellen einer Linie zu einer fahrplangemässen Abfahrtszeit. Er enthält jeweils die Anzahl ein- und aussteigender Personen an der Starthaltestelle und die Anzahl Reisender auf dem Streckenabschnitt. Es entsteht so ein vollständiger Überblick über das (extrapolierte) Verhalten aller Fahrgäste der VBZ innerhalb eines Tages. 
+Diese Karte stellt die Frequenz von Fussgängern, Velofahrern und motorisierten Fahrzeugen an verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020 dar. Sie wurden in verschiedenen Intervallen gezählt, zum Zweck dieser Darstellung aber auf ganze Wochenzahlen aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs in Hinblick auf das Verhalten während verchiedener Massnahmen zur Eindämmung der COVID-19-Pandemie. Die Darstellung erlaubt die Auswahl von Kalenderwochen und Verkehrsmodus und informiert jeweils kurz über den aktuellen Massnahmenkatalog in der Stadt Zürich.
 
-## Umsetzung
-
-Die Netzstatistik der VBZ wird mithilfe der Koordinatenangaben im offenen Dienststellendokumentation der SBB "DiDok" georeferenziert und über das Python-Modul Geopandas als Geodatensatz nutzbar gemacht. Auf Grundlage der Informationen der VBZ über Fahrzeugmodelle und ihren Einsatz werden Kapazitätsgrenzen der einzelnen Linien errechnet. Die Fahrgastzahlen werden zusammengefasst, um Aussagen über den Gesamtpersonenfluss jeweils einzelner Abschnitte (die Strecke zwischen zwei Haltestellen als atomare Einheit) über den Zeitraum zwischen zwei vollen Stunden an einem Werktag (Mo-Fr) bzw. Wochenendtag machen zu können. Die Daten werden im GeoJSON-Format ausgegeben, um sie in Form einer interaktiven Webkarte darstellen zu können; eine solche wird mit Mapbox GL erstellt. 
-
-Der gesamte [Arbeitsprozess mit Rohdaten](https://github.com/bountan/vbz-dataprep) ist abrufbar auf Github. 
-
-Die [vollständige Webseite](https://github.com/bountan/vbz-flow-concept) ist ebenfalls verfügbar.
+Die Werte basieren auf automatisierten Zählungen durch die Stadt Zürich, die von ebenjener auf statistische Fehlerquellen hin geprüft und korrigiert wurden. Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten Daten seitens des Autors dieser Darstellung.
 
 
 ## Datenquellen
-Alle verwendeten Daten werden sind öffentlich zugänglich 
-[Open Data Zürich: Fahrgastzahlen VBZ](https://data.stadt-zuerich.ch/dataset/vbz_fahrgastzahlen_ogd)	
+[Open Data Stadt Zürich: Verkehrszählung MIV](https://data.stadt-zuerich.ch/dataset/sid_dav_verkehrszaehlung_miv_od2031/resource/44607195-a2ad-4f9b-b6f1-d26c003d85a2)	
 
-[Fahrzeugkenndaten VBZ](https://www.stadt-zuerich.ch/vbz/de/index/die_vbz/fahrzeuge.html) 
+[Open Data Stadt Zürich: Verkehrszählung Fussgänger und Veloverkehr](https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/b9308f85-9066-4f5b-8eab-344c790a6982) 
 
-[Haltestellen gemäss opentransportdata.swiss](https://data.sbb.ch/explore/dataset/dienststellen-gemass-opentransportdataswiss/table/)
+[IVT ETH Studie MOBIS: Rahmenangaben](https://ivtmobis.ethz.ch/mobis/covid19/reports/latest_de#durchschnittliche-tagesdistanz)
 
-## Autoren
+[Titelbild](https://www.lombardodier.com/files/live/sites/loportail/files/news/2020/May/20200513/RethinkSustainability-Mobility_LinkedIn-Facebook.jpg)
+## Autor
 
 Ueli Isenschmid
-
-Anian Pleisch
-
-Janik Sievert
-
-Severin Spörri
-
+[Email](mailto:ueli.isenschmid@gmail.com)
+[Linkedin](https://www.linkedin.com/in/ueli-isenschmid/)
 ## Lizenz
 
 [GNU](https://choosealicense.com/licenses/gpl-3.0/) 
