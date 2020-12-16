@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Verkehrsflüsse VBZ</title>
+
+<!--- libraries -->
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+  <link rel="stylesheet" type="text/css" href="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/styles/styles-vbz.css">
+</head>
+<body>
+
+<!--- banner-->
+  <div class="bannerimage">
+    <div class="bannertext">
+      <h1>Verkehrsflüsse VBZ</h1>
+    </div>
+  </div>
+
+<!-- introtext -->
+<div id='headtext'>
+Diese Karte stellt die Nutzung des VBZ-Netzes and einem Durchschnittstag dar.
+Jeder gefahrene Streckenabschnitt wird richtungsgetrennt dargestellt ("Rechtsverkehr").
+Die Strichfarbe stellt dar, wie voll die Fahrzeuge über die gesamte Stunde durschnittlich sind.
+Die Strichbreite stellt dar, wieviele Passagiere total auf diesem Abschnitt in dieser Stunde unterwegs sind.
+Genauere Werte werden durch Anklicken angezeigt. Per Rechtsklick in die Karte kann der Ansichtswinkel verändert werden.
+<br>Die Werte basieren auf punktuellen Messungen der VBZ, die extrapoliert wurden.
+Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten Daten seitens der Autoren.
+  <br><br>Datenherkunft: <a href='https://data.stadt-zuerich.ch/dataset/vbz_fahrgastzahlen_ogd' target="_blank">Stadt Zürich Open Data</a>
+  <br>Kontakt Autoren: Ueli Isenschmid&nbsp;&nbsp;&nbsp;<a href='mailto:ueli.isenschmid@gmail.com'>Email</a>, <a href='https://www.linkedin.com/in/ueli-isenschmid/' target="_blank">Linkedin</a>
+
+  </div>
+
+<!--- map object-->
+
+<div id='map'></div>
+
+<!-- console controls -->
+<div id='console'>
+  <h3>Fahrgastzahlen VBZ 2018</h3>
+
+<!-- legend -->
+  <div class='session'>
+    <h2>Auslastung Fahrzeuge im Durchschnitt</h2>
+
+
+<!-- slider daytime -->
+    <div class='session' id='sliderbar'>
+<h2 class = 'paddingtop'>Stunde: <label id='active-hour' >12h - 13h</label></h2>
+  <input id='slider' class='row' type='range' min='0' max='52' step='1' value='26' />
+</div>
+  </div>
+
+<!-- buttons weekday kind -->
+  <div class='session'>
+    <h2>Wochentage</h2>
+    <div class='row' id='filters'>
+      <input id='weekday' type='radio' name='toggle' value=1>
+      <label for='weekday'>Werktag</label>
+      <input id='weekend' type='radio' name='toggle' value=0>
+      <label for='weekend'>Wochenende</label>
+    </div>
+  </div>
+
+</div>
+
+<!-- map controls -->
+<script>
+
+// basemap from mapbox
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYm91bnRhbiIsImEiOiJpSXVpaU1BIn0.pzuLQeLdLb3bRoYeQNc9jA';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      center: [8.539261, 47.376166],
+      zoom: 13,
+      minZoom: 10,
+      maxZoom: 16,
+      style: 'mapbox://styles/bountan/ckc9d897z432e1imtuzvbx928',
+      maxBounds: [[8.236389, 47.300210], [8.696031, 47.461794]]
+    });
+
+// map controls
+    var scale = new mapboxgl.ScaleControl({
+    maxWidth: 200,
+    unit: 'metric'
+    });
+    map.addControl(scale);
+
+    map.addControl(new mapboxgl.FullscreenControl());
+
+// load map
+map.on('load', function() {
+
+// variables filter what to display
+  var filterHour = ['==', ['get', 'wk'], 12];
+  var filterDay = ['==', ['get', 'kind'], 1];
+  var daytext = "an einem Wochentag"
+
+// add sections of traffic layer
+  map.addLayer({
+    id: 'vbzjson',
+    type: 'circle',
+    source: {
+      type: 'geojson',
+      data: 'C:\Users\bountan\Drive\UZH\GEO372 GIS V\UebungCOVIDMobility\04_gis\data\zuri.geojson',
+    },
+        //data dependent color and width of lines
+    paint: {
+                'circle-radius': [
+          'interpolate', ['linear'], ['zoom'],
+            11, ['/',   ['step',
+                  ['get', 'car'],
+
+                  2, 20,
+                  10, 100,
+                  20, 500,
+                  30, 1500,
+                  50
+                ], 24],
+            13, ['/', ['step',
+                  ['get', 'car'],
+
+                  2, 20,
+                  10, 100,
+                  20, 500,
+                  30, 1500,
+                  50
+                ], 10],
+                15, ['/',   ['step',
+                      ['get', 'car'],
+                      1, 0,
+                      4, 15,
+                      6, 150,
+                      10, 500,
+                      15, 1000,
+                      20
+                    ], 0.8],
+          ],
+      'circle-color': [
+      'step',
+      ['get', 'car'],
+      '#2d8ac0', 12.5,
+      '#559783', 25,
+      '#add8a4', 37.5,
+      '#e4ea9a', 50,
+      '#fae08a', 62.5,
+      '#f9ae60', 75,
+      '#f26b44', 87.5,
+      '#d83d51'
+      ],
+    },
+// initial filter
+'filter': ['all', filterHour, filterDay]
+
+  });
+
+//listener for slider change
+  document.getElementById('slider').addEventListener('input', function(e) {
+  var hour = parseInt(e.target.value);
+
+  filterHour = ["==", ['get', 'time'], hour]
+
+  map.setFilter('vbzjson', ['all', filterHour, filterDay]
+  );
+
+  // update text in the UI
+  document.getElementById('active-hour').innerText = hour +'h - '+(hour+1)+"h";
+});
+
+
+// listener for button change
+
+document.getElementById('filters').addEventListener('change', function(e) {
+  var day = parseInt(e.target.value);
+  if (day == 1){
+    daytext = "an einem Werktag"
+  } else {
+    daytext = "am Wochenende"
+  }
+
+  filterDay = ["==", ['get', 'daytype'], day]
+  map.setFilter('vbzjson', ['all', filterHour, filterDay]);
+});
+
+//layer haltestellen, pretty static layer
+map.addLayer({
+  id: 'haltestellen',
+  type: 'circle',
+  source: {
+    type: 'geojson',
+    data: 'C:/Users/bountan/Drive/UZH/GEO372 GIS V/UebungCOVIDMobility/04_gis/data/haltestellen.geojson'
+    },
+  paint: {
+    'circle-color': '#888888',
+    'circle-radius': [
+    'interpolate', ['linear'], ['zoom'],
+    13, 4,
+    16, 30,
+  ],
+
+}
+});
+
+/// popup on line sections
+map.on('click', 'vbzjson', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML("Von "+e.features[0].properties.name_start+"<br>bis "+e.features[0].properties.name_ziel+"<br><b>"+e.features[0].properties.oc+" Passagiere<br>"+e.features[0].properties.ld+"% durchschnittliche Besetzung</b><br>in dieser Stunde "+daytext)
+.addTo(map);
+});
+
+// popup stops
+map.on('click', 'haltestellen', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML("Haltestelle<br><b>"+e.features[0].properties.name+"</b>")
+.addTo(map);
+});
+// change cursor on hover sections
+map.on('mouseenter', 'vbzjson', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+
+// change cursor back sections
+map.on('mouseleave', 'vbzjson', function() {
+map.getCanvas().style.cursor = '';
+});
+
+// change cursor on hover stops
+map.on('mouseenter', 'haltestellen', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+
+// change cursor back stops
+map.on('mouseleave', 'haltestellen', function() {
+map.getCanvas().style.cursor = '';
+});
+});
+
+</script>
+
+</body>
+
+</html>
