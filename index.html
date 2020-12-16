@@ -42,34 +42,18 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 
 <!-- legend -->
   <div class='session'>
-    <h2>Auslastung Fahrzeuge im Durchschnitt</h2>
+    <h2>Total Zählungen</h2>
     <div class='row colors'></div>
 
-    <div class='row'>
-      <div class='label perc'>0%</div>
-      <div class='label perc'>20%</div>
-      <div class='label perc'>40%</div>
-      <div class='label perc'>60%</div>
-      <div class='label perc'>80%</div>
-      <div class='label perc'>100%+</div>
-    </div>
-
-    <h2>Anzahl Fahrgäste Total</h2>
-    <div class='row'style="margin-bottom: 30px">
-      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol1.png" alt="0-10">
-      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol2.png" alt="11-150">
-      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol3.png" alt="151-500">
-      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol4.png" alt="501-1000">
-      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol5.png" alt="1000+">
-    </div>
-
     <div class='row' >
-      <div class='label vol'>0 - 20</div>
-      <div class='label vol'>21 - 100</div>
-      <div class='label vol'>101 - 500</div>
-      <div class='label vol'>501 - 1500</div>
-      <div class='label vol'>1500+</div>
-    </div>
+    <div class='label vol'>0 - 20</div>
+    <div class='label vol'>21 - 100</div>
+    <div class='label vol'>101 - 500</div>
+    <div class='label vol'>501 - 1500</div>
+    <div class='label vol'>1500+</div>
+  </div>
+
+
 
 <!-- slider daytime -->
     <div class='session' id='sliderbar'>
@@ -83,9 +67,9 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
     <h2>Verkehrsmodus</h2>
     <div class='row' id='filters'>
       <input id='car' type='radio' name='toggle' value=3>
-      <label for='car'>Motorisierter Verkehr</label>
+      <label for='car'>Motorisierter Verkehr</label><br>
       <input id='ped' type='radio' name='toggle' value=1>
-      <label for='ped'>Fussgänger</label>
+      <label for='ped'>Fussgänger</label><br>
       <input id='bike' type='radio' name='toggle' value=2>
       <label for='bike'>Velo</label>
     </div>
@@ -122,8 +106,8 @@ map.on('load', function() {
 
 // variables filter what to display
   var filterHour = ['==', ['get', 'wk'], 1];
-  var filterDay = ['==', ['get', 'kind'], "c"];
-  var daytext = "an einem Wochentag"
+  var filterDay = ['==', ['get', 'kind'], 1];
+  var daytext = "Fussgänger"
 
 // add sections of traffic layer
   map.addLayer
@@ -146,11 +130,11 @@ map.on('load', function() {
 
 document.getElementById('filters').addEventListener('change', function(e) {
   var day = parseInt(e.target.value);
-  if (day == 0){
+  if (day == 1){
     daytext = "Fussgänger"
-  } else if (day == 1) {
+  } else if (day == 2) {
     daytext = "Velofahrer"
-  } else if (day == 2){
+  } else if (day == 3){
     daytext = "Motorisierte Fahrzeuge"
   }
   else{
