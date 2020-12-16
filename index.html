@@ -73,19 +73,21 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 
 <!-- slider daytime -->
     <div class='session' id='sliderbar'>
-<h2 class = 'paddingtop'>Stunde: <label id='active-hour' >12h - 13h</label></h2>
-  <input id='slider' class='row' type='range' min='0' max='23' step='1' value='12' />
+<h2 class = 'paddingtop'>Kalenderwoche: <label id='active-hour' >1</label></h2>
+  <input id='slider' class='row' type='range' min='0' max='52' step='1' value='1' />
 </div>
   </div>
 
 <!-- buttons weekday kind -->
   <div class='session'>
-    <h2>Wochentage</h2>
+    <h2>Verkehrsmodus</h2>
     <div class='row' id='filters'>
-      <input id='weekday' type='radio' name='toggle' value=1>
-      <label for='weekday'>Werktag</label>
-      <input id='weekend' type='radio' name='toggle' value=0>
-      <label for='weekend'>Wochenende</label>
+      <input id='car' type='radio' name='toggle' value="c">
+      <label for='car'>Motorisierter Verkehr</label>
+      <input id='ped' type='radio' name='toggle' value="p">
+      <label for='ped'>Fussgänger</label>
+      <input id='bike' type='radio' name='toggle' value="b">
+      <label for='bike'>Velo</label>
     </div>
   </div>
 
@@ -119,84 +121,20 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 map.on('load', function() {
 
 // variables filter what to display
-  var filterHour = ['==', ['get', 'time'], 12];
-  var filterDay = ['==', ['get', 'daytype'], 1];
+  var filterHour = ['==', ['get', 'wk'], 1];
+  var filterDay = ['==', ['get', 'kind'], "c"];
   var daytext = "an einem Wochentag"
 
 // add sections of traffic layer
-  map.addLayer({
-    id: 'vbzjson',
-    type: 'line',
-    source: {
-      type: 'geojson',
-      data: 'https://github.com/bountan/mobilitycovid/blob/master/data/zuri.geojson',
-    },
-    layout: {
-      'line-cap':'round',
-    },
-
-    //data dependent color and width of lines
-    paint: {
-        'line-offset': [
-        'interpolate', ['linear',], ['zoom'],
-        11, 1,
-        15, 15,
-      ],
-        'line-width': [
-          'interpolate', ['linear'], ['zoom'],
-            11, ['/',   ['step',
-                  ['get', 'occsum'],
-
-                  2, 20,
-                  10, 100,
-                  20, 500,
-                  30, 1500,
-                  50
-                ], 24],
-            13, ['/', ['step',
-                  ['get', 'occsum'],
-
-                  2, 20,
-                  10, 100,
-                  20, 500,
-                  30, 1500,
-                  50
-                ], 10],
-                15, ['/',   ['step',
-                      ['get', 'occsum'],
-                      1, 0,
-                      4, 15,
-                      6, 150,
-                      10, 500,
-                      15, 1000,
-                      20
-                    ], 0.8],
-          ],
-      'line-color': [
-      'step',
-      ['get', 'loadmean'],
-      '#2d8ac0', 12.5,
-      '#559783', 25,
-      '#add8a4', 37.5,
-      '#e4ea9a', 50,
-      '#fae08a', 62.5,
-      '#f9ae60', 75,
-      '#f26b44', 87.5,
-      '#d83d51'
-      ],
-    },
-// initial filter
-'filter': ['all', filterHour, filterDay]
-
-  });
+  map.addLayer
 
 //listener for slider change
   document.getElementById('slider').addEventListener('input', function(e) {
   var hour = parseInt(e.target.value);
 
-  filterHour = ["==", ['get', 'time'], hour]
+  filterHour = ["==", ['get', 'wk'], hour]
 
-  map.setFilter('vbzjson', ['all', filterHour, filterDay]
+  map.setFilter('haltestellen', ['all', filterHour, filterDay]
   );
 
   // update text in the UI
@@ -215,7 +153,7 @@ document.getElementById('filters').addEventListener('change', function(e) {
   }
 
   filterDay = ["==", ['get', 'daytype'], day]
-  map.setFilter('vbzjson', ['all', filterHour, filterDay]);
+  map.setFilter('haltestellen', ['all', filterHour, filterDay]);
 });
 
 //layer haltestellen, pretty static layer
@@ -226,88 +164,64 @@ map.addLayer({
     type: 'geojson',
     data: 'https://bountan.github.io/mobilitycovid/data/zuri.geojson'
     },
-    paint: {
-        'line-offset': [
-        'interpolate', ['linear',], ['zoom'],
-        11, 1,
-        15, 15,
-      ],
-        'circle-radius': [
-          'interpolate', ['linear'], ['zoom'],
-            11, ['/',   ['step',
+
+
+
+
+  paint: {
+    'circle-color': [
+    'step',
+    ['get', 'n'],
+    '#2d8ac0', 20,
+    '#559783', 100,
+    '#add8a4', 400,
+    '#e4ea9a', 800,
+    '#fae08a', 2000,
+    '#f9ae60', 3000,
+    '#f26b44', 5000,
+    '#d83d51'
+    ],
+    'circle-radius': [
+      'interpolate', ['linear'], ['zoom'],
+        11, ['/',   ['step',
+              ['get', 'n'],
+
+              2, 20,
+              10, 100,
+              20, 500,
+              30, 1500,
+              50
+            ], 24],
+        13, ['/', ['step',
+              ['get', 'n'],
+
+              20, 2,
+              100, 100,
+              200, 500,
+              300, 1500,
+              500
+            ], 10],
+            15, ['/',   ['step',
                   ['get', 'n'],
-
-                  2, 20,
-                  10, 100,
-                  20, 500,
-                  30, 1500,
-                  50
-                ], 24],
-            13, ['/', ['step',
-                  ['get', 'n'],
-
-                  2, 20,
-                  10, 100,
-                  20, 500,
-                  30, 1500,
-                  50
-                ], 10],
-                15, ['/',   ['step',
-                      ['get', 'n'],
-                      1, 0,
-                      4, 15,
-                      6, 150,
-                      10, 500,
-                      15, 1000,
-                      20
-                    ], 0.8],
-          ],
-      'circle-color': [
-      'step',
-      ['get', 'n'],
-      '#2d8ac0', 12.5,
-      '#559783', 25,
-      '#add8a4', 37.5,
-      '#e4ea9a', 50,
-      '#fae08a', 62.5,
-      '#f9ae60', 75,
-      '#f26b44', 87.5,
-      '#d83d51'
+                  10, 0,
+                  40, 15,
+                  60, 150,
+                  100, 500,
+                  150, 1000,
+                  200
+                ], 0.8],
       ],
-    },
-
-
-
-
 
 }
 });
-
-/// popup on line sections
-map.on('click', 'vbzjson', function(e) {
-new mapboxgl.Popup()
-.setLngLat(e.lngLat)
-.setHTML("Von "+e.features[0].properties.name_start+"<br>bis "+e.features[0].properties.name_ziel+"<br><b>"+e.features[0].properties.occsum+" Passagiere<br>"+e.features[0].properties.loadmean+"% durchschnittliche Besetzung</b><br>in dieser Stunde "+daytext)
-.addTo(map);
-});
-
 // popup stops
 map.on('click', 'haltestellen', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Haltestelle<br><b>"+e.features[0].properties.name+"</b>")
+.setHTML("Total Messungen in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
 .addTo(map);
 });
 // change cursor on hover sections
-map.on('mouseenter', 'vbzjson', function() {
-map.getCanvas().style.cursor = 'pointer';
-});
-
-// change cursor back sections
-map.on('mouseleave', 'vbzjson', function() {
-map.getCanvas().style.cursor = '';
-});
-
 // change cursor on hover stops
 map.on('mouseenter', 'haltestellen', function() {
 map.getCanvas().style.cursor = 'pointer';
