@@ -226,13 +226,59 @@ map.addLayer({
     type: 'geojson',
     data: 'https://bountan.github.io/mobilitycovid/data/zuri.geojson'
     },
-  paint: {
-    'circle-color': '#888888',
-    'circle-radius': [
-    'interpolate', ['linear'], ['zoom'],
-    13, 4,
-    16, 30,
-  ],
+    paint: {
+        'line-offset': [
+        'interpolate', ['linear',], ['zoom'],
+        11, 1,
+        15, 15,
+      ],
+        'circle-radius': [
+          'interpolate', ['linear'], ['zoom'],
+            11, ['/',   ['step',
+                  ['get', 'n'],
+
+                  2, 20,
+                  10, 100,
+                  20, 500,
+                  30, 1500,
+                  50
+                ], 24],
+            13, ['/', ['step',
+                  ['get', 'n'],
+
+                  2, 20,
+                  10, 100,
+                  20, 500,
+                  30, 1500,
+                  50
+                ], 10],
+                15, ['/',   ['step',
+                      ['get', 'n'],
+                      1, 0,
+                      4, 15,
+                      6, 150,
+                      10, 500,
+                      15, 1000,
+                      20
+                    ], 0.8],
+          ],
+      'circle-color': [
+      'step',
+      ['get', 'n'],
+      '#2d8ac0', 12.5,
+      '#559783', 25,
+      '#add8a4', 37.5,
+      '#e4ea9a', 50,
+      '#fae08a', 62.5,
+      '#f9ae60', 75,
+      '#f26b44', 87.5,
+      '#d83d51'
+      ],
+    },
+
+
+
+
 
 }
 });
