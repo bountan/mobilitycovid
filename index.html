@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Verkehrsflüsse VBZ</title>
+<title>Mobilität ZH COVID19</title>
 
 <!--- libraries -->
   <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
@@ -14,19 +14,18 @@
 <!--- banner-->
   <div class="bannerimage">
     <div class="bannertext">
-      <h1>Mobilität in Zürich während COVID-19</h1>
+      <h1>Mobilität in Zürich während COVID-19 2020</h1>
     </div>
   </div>
 
 <!-- introtext -->
 <div id='headtext'>
-Diese Karte stellt die Nutzung des VBZ-Netzes and einem Durchschnittstag dar.
-Jeder gefahrene Streckenabschnitt wird richtungsgetrennt dargestellt ("Rechtsverkehr").
-Die Strichfarbe stellt dar, wie voll die Fahrzeuge über die gesamte Stunde durschnittlich sind.
-Die Strichbreite stellt dar, wieviele Passagiere total auf diesem Abschnitt in dieser Stunde unterwegs sind.
-Genauere Werte werden durch Anklicken angezeigt. Per Rechtsklick in die Karte kann der Ansichtswinkel verändert werden.
-<br>Die Werte basieren auf punktuellen Messungen der VBZ, die extrapoliert wurden.
-Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten Daten seitens der Autoren.
+Diese Karte stellt die Frequenz von Fussgängern, Velofahrern und motorisierten Fahrzeugen an verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020
+dar. Sie wurden in verschiedenen Intervallen gezählt, zum Zweck dieser Darstellung aber auf ganze Wochenzahlen
+aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs in Hinblick auf das Verhalten während verchiedener Massnahmen zur Eindämmung der COVID-19-Pandemie.
+ Die Darstellung erlaubt die Auswahl von Kalenderwochen und Verkehrsmodus und informiert jeweils kurz über den aktuellen Massnahmenkatalog in der Stadt Zürich.
+
+<br><br>Die Werte basieren auf automatisierten Zählungen durch die Stadt Zürich, die von ebenjener auf statistische Fehlerquellen hin geprüft und korrigiert wurden. Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten Daten seitens des Autors dieser Darstellung.
   <br><br>Datenherkunft: Open Data Stadt Zürich <a href='https://data.stadt-zuerich.ch/dataset/sid_dav_verkehrszaehlung_miv_od2031/resource/44607195-a2ad-4f9b-b6f1-d26c003d85a2' target="_blank">Verkehrszählung MIV</a>, <a href='https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/b9308f85-9066-4f5b-8eab-344c790a6982' target="_blank">Verkehrszählung Fussgänger und Veloverkehr</a>
   <br>Kontakt Autor: Ueli Isenschmid&nbsp;&nbsp;&nbsp;<a href='mailto:ueli.isenschmid@gmail.com'>Email</a>, <a href='https://www.linkedin.com/in/ueli-isenschmid/' target="_blank">Linkedin</a>
 
@@ -38,7 +37,6 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 
 <!-- console controls -->
 <div id='console'>
-  <h3>Fahrgastzahlen VBZ 2018</h3>
 
 <!-- legend -->
   <div class='session'>
@@ -46,23 +44,25 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
     <div class='row colors'></div>
 
     <div class='row' >
-    <div class='label vol'>0 - 20</div>
-    <div class='label vol'>21 - 100</div>
-    <div class='label vol'>101 - 500</div>
-    <div class='label vol'>501 - 1500</div>
-    <div class='label vol'>1500+</div>
+    <div class='label vol'>&nbsp&nbsp&nbsp&nbsp0 -<br>200</div>
+    <div class='label vol'>&nbsp&nbsp200 -<br>1000</div>
+    <div class='label vol'>&nbsp&nbsp1000 -<br>10000</div>
+    <div class='label vol'>&nbsp&nbsp10000 -<br>75000</div>
+    <div class='label vol'>75000+</div>
   </div>
 
 
 
-<!-- slider daytime -->
+<!-- slider modetime -->
     <div class='session' id='sliderbar'>
-<h2 class = 'paddingtop'>Kalenderwoche: <label id='active-hour' >1</label></h2>
-  <input id='slider' class='row' type='range' min='0' max='52' step='1' value='1' />
+<h2 class = 'paddingtop'>Kalenderwoche: <label id='active-week' >1</label></h2>
+<h2 class = 'paddingtop'><label id='lockdownstat' >‏‏‎ ‎‎</label></h2>
+
+  <input id='slider' class='row' type='range' min='1' max='52' step='1' value='1' />
 </div>
   </div>
 
-<!-- buttons weekday kind -->
+<!-- buttons weekmode kind -->
   <div class='session'>
     <h2>Verkehrsmodus</h2>
     <div class='row' id='filters'>
@@ -105,119 +105,148 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 map.on('load', function() {
 
 // variables filter what to display
-  var filterHour = ['==', ['get', 'wk'], 1];
-  var filterDay = ['==', ['get', 'kind'], 1];
-  var daytext = "Fussgänger"
+  var filterWeek = ['==', ['get', 'wk'], 1];
+  var filterMode = ['==', ['get', 'kind'], 1];
+  var modetext = "Fussgänger"
 
 // add sections of traffic layer
   map.addLayer
 
 //listener for slider change
   document.getElementById('slider').addEventListener('input', function(e) {
-  var hour = parseInt(e.target.value);
+  var week = parseInt(e.target.value);
 
-  filterHour = ["==", ['get', 'wk'], hour]
 
-  map.setFilter('haltestellen', ['all', filterHour, filterDay]
+
+
+  filterWeek = ["==", ['get', 'wk'], week]
+
+  map.setFilter('location', ['all', filterWeek, filterMode]
   );
 
   // update text in the UI
-  document.getElementById('active-hour').innerText = hour;
+  document.getElementById('active-week').innerText = week;
+
+
+  if (week < 12){
+      lockdown = "‏‏‎ ‎"
+    } else if (week < 20) {
+      lockdown = "Lockdown 16. März"
+    } else if (week < 28) {
+      lockdown = "Aufgehoben 11. Mai"
+    } else if (week < 43) {
+      lockdown = "Maskenpflicht 6. Juli"
+    } else {
+      lockdown = "Zweite Welle 19. Oktober"
+    }
+
+document.getElementById('lockdownstat').innerText = lockdown;
 });
 
 
 // listener for button change
 
 document.getElementById('filters').addEventListener('change', function(e) {
-  var day = parseInt(e.target.value);
-  if (day == 1){
-    daytext = "Fussgänger"
-  } else if (day == 2) {
-    daytext = "Velofahrer"
-  } else if (day == 3){
-    daytext = "Motorisierte Fahrzeuge"
+  var mode = parseInt(e.target.value);
+  if (mode == 1){
+    modetext = "Fussgänger"
+  } else if (mode == 2) {
+    modetext = "Velofahrer"
+  } else if (mode == 3){
+    modetext = "motorisierte Fahrzeuge"
   }
   else{
-    daytext = ""
+    modetext = ""
   }
 
-  filterDay = ["==", ['get', 'kind'], day]
-  map.setFilter('haltestellen', ['all', filterHour, filterDay]);
+
+
+
+
+
+  filterMode = ["==", ['get', 'kind'], mode]
+  map.setFilter('location', ['all', filterWeek, filterMode]);
 });
 
-//layer haltestellen, pretty static layer
+//layer location, pretty static layer
 map.addLayer({
-  id: 'haltestellen',
+  id: 'location',
   type: 'circle',
   source: {
     type: 'geojson',
     data: 'https://bountan.github.io/mobilitycovid/data/zuri.geojson'
     },
 
-
-
-
   paint: {
     'circle-color': [
     'step',
     ['get', 'n'],
-    '#2d8ac0', 20,
-    '#559783', 100,
-    '#add8a4', 400,
-    '#e4ea9a', 800,
-    '#fae08a', 2000,
-    '#f9ae60', 3000,
-    '#f26b44', 5000,
+    '#2d8ac0', 200,
+    '#559783', 1000,
+    '#add8a4', 5000,
+    '#e4ea9a', 10000,
+    '#fae08a', 15000,
+    '#f9ae60', 40000,
+    '#f26b44', 75000,
     '#d83d51'
     ],
+
     'circle-radius': [
       'interpolate', ['linear'], ['zoom'],
         11, ['/',   ['step',
               ['get', 'n'],
 
-              2, 20,
-              10, 100,
-              20, 500,
-              30, 1500,
-              50
-            ], 24],
+              2, 200,
+              4, 1000,
+              6, 5000,
+              10, 10000,
+              12, 15000,
+              16, 40000,
+              20, 75000,
+              25
+            ], 2],
         13, ['/', ['step',
               ['get', 'n'],
 
-              20, 2,
-              100, 100,
-              200, 500,
-              300, 1500,
-              500
-            ], 10],
+              2, 200,
+              4, 1000,
+              6, 5000,
+              10, 10000,
+              12, 15000,
+              16, 40000,
+              20, 75000,
+              25
+            ], 0.7],
             15, ['/',   ['step',
                   ['get', 'n'],
-                  10, 0,
-                  40, 15,
-                  60, 150,
-                  100, 500,
-                  150, 1000,
-                  200
-                ], 0.8],
+                  2, 200,
+                  4, 1000,
+                  6, 5000,
+                  10, 10000,
+                  12, 15000,
+                  16, 40000,
+                  20, 75000,
+                  25
+                ], 0.3],
       ],
 
 }
 });
 // popup stops
-map.on('click', 'haltestellen', function(e) {
+map.on('click', 'location', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Total Messungen in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
+.setHTML("Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
 .addTo(map);
 });
 // change cursor on hover sections
 // change cursor on hover stops
-map.on('mouseenter', 'haltestellen', function() {
+map.on('mouseenter', 'location', function() {
 map.getCanvas().style.cursor = 'pointer';
 });
 
 // change cursor back stops
-map.on('mouseleave', 'haltestellen', function() {
+map.on('mouseleave', 'location', function() {
 map.getCanvas().style.cursor = '';
 });
 });

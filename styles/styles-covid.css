@@ -45,11 +45,12 @@ a {
 
 .session {
   width: 100%;
+
   margin-bottom: 20px;
 }
 
 .row {
-  height: 10px;
+  height: 15px;
   width: 100%;
 }
 
