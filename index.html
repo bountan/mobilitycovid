@@ -43,12 +43,38 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 <!-- legend -->
   <div class='session'>
     <h2>Auslastung Fahrzeuge im Durchschnitt</h2>
+    <div class='row colors'></div>
 
+    <div class='row'>
+      <div class='label perc'>0%</div>
+      <div class='label perc'>20%</div>
+      <div class='label perc'>40%</div>
+      <div class='label perc'>60%</div>
+      <div class='label perc'>80%</div>
+      <div class='label perc'>100%+</div>
+    </div>
+
+    <h2>Anzahl Fahrgäste Total</h2>
+    <div class='row'style="margin-bottom: 30px">
+      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol1.png" alt="0-10">
+      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol2.png" alt="11-150">
+      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol3.png" alt="151-500">
+      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol4.png" alt="501-1000">
+      <img class = 'label vol' src="https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/images/vol5.png" alt="1000+">
+    </div>
+
+    <div class='row' >
+      <div class='label vol'>0 - 20</div>
+      <div class='label vol'>21 - 100</div>
+      <div class='label vol'>101 - 500</div>
+      <div class='label vol'>501 - 1500</div>
+      <div class='label vol'>1500+</div>
+    </div>
 
 <!-- slider daytime -->
     <div class='session' id='sliderbar'>
 <h2 class = 'paddingtop'>Stunde: <label id='active-hour' >12h - 13h</label></h2>
-  <input id='slider' class='row' type='range' min='0' max='52' step='1' value='26' />
+  <input id='slider' class='row' type='range' min='0' max='23' step='1' value='12' />
 </div>
   </div>
 
@@ -93,24 +119,33 @@ Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten 
 map.on('load', function() {
 
 // variables filter what to display
-  var filterHour = ['==', ['get', 'wk'], 12];
-  var filterDay = ['==', ['get', 'kind'], 1];
+  var filterHour = ['==', ['get', 'time'], 12];
+  var filterDay = ['==', ['get', 'daytype'], 1];
   var daytext = "an einem Wochentag"
 
 // add sections of traffic layer
   map.addLayer({
     id: 'vbzjson',
-    type: 'circle',
+    type: 'line',
     source: {
       type: 'geojson',
-      data: 'C:\Users\bountan\Drive\UZH\GEO372 GIS V\UebungCOVIDMobility\04_gis\data\zuri.geojson',
+      data: 'https://bountan.github.io/mobilitycovid/data/haltestellen.geojson',
     },
-        //data dependent color and width of lines
+    layout: {
+      'line-cap':'round',
+    },
+
+    //data dependent color and width of lines
     paint: {
-                'circle-radius': [
+        'line-offset': [
+        'interpolate', ['linear',], ['zoom'],
+        11, 1,
+        15, 15,
+      ],
+        'line-width': [
           'interpolate', ['linear'], ['zoom'],
             11, ['/',   ['step',
-                  ['get', 'car'],
+                  ['get', 'occsum'],
 
                   2, 20,
                   10, 100,
@@ -119,7 +154,7 @@ map.on('load', function() {
                   50
                 ], 24],
             13, ['/', ['step',
-                  ['get', 'car'],
+                  ['get', 'occsum'],
 
                   2, 20,
                   10, 100,
@@ -128,7 +163,7 @@ map.on('load', function() {
                   50
                 ], 10],
                 15, ['/',   ['step',
-                      ['get', 'car'],
+                      ['get', 'occsum'],
                       1, 0,
                       4, 15,
                       6, 150,
@@ -137,9 +172,9 @@ map.on('load', function() {
                       20
                     ], 0.8],
           ],
-      'circle-color': [
+      'line-color': [
       'step',
-      ['get', 'car'],
+      ['get', 'loadmean'],
       '#2d8ac0', 12.5,
       '#559783', 25,
       '#add8a4', 37.5,
@@ -189,7 +224,7 @@ map.addLayer({
   type: 'circle',
   source: {
     type: 'geojson',
-    data: 'C:/Users/bountan/Drive/UZH/GEO372 GIS V/UebungCOVIDMobility/04_gis/data/haltestellen.geojson'
+    data: 'https://verkehrsbetriebezuerich.github.io/vbz-flow-concept/data/haltestellen.geojson'
     },
   paint: {
     'circle-color': '#888888',
@@ -206,7 +241,7 @@ map.addLayer({
 map.on('click', 'vbzjson', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Von "+e.features[0].properties.name_start+"<br>bis "+e.features[0].properties.name_ziel+"<br><b>"+e.features[0].properties.oc+" Passagiere<br>"+e.features[0].properties.ld+"% durchschnittliche Besetzung</b><br>in dieser Stunde "+daytext)
+.setHTML("Von "+e.features[0].properties.name_start+"<br>bis "+e.features[0].properties.name_ziel+"<br><b>"+e.features[0].properties.occsum+" Passagiere<br>"+e.features[0].properties.loadmean+"% durchschnittliche Besetzung</b><br>in dieser Stunde "+daytext)
 .addTo(map);
 });
 
