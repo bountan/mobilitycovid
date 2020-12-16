@@ -84,7 +84,7 @@ h3 {
 }
 
 .bannerimage {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("../images/street.jpg");
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://bountan.github.io/mobilitycovid/images/street.jpg");
   height: 15%;
   width: 100%;
 /* quelle bild https://www.stadt-zuerich.ch/vbz/de/index/fahrplan.html */
