@@ -20,16 +20,16 @@
 
 <!-- introtext -->
 <div id='headtext'>
-Diese Karte stellt die Frequenz von Fussgängern und Velofahrern und motorisierten Fahrzeugen an verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020
-dar. Sie wurden in verschiedenen Intervallen gezählt, zum Zweck dieser Darstellung aber auf ganze Wochenzahlen
+Diese Karte stellt die Frequenz von Fussgängern und Velofahrern an verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020
+dar. Sie wurden in Viertelstunden-Intervallen gezählt, zum Zweck dieser Darstellung aber auf ganze Kalenderwochen
 aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs in Hinblick auf das Verhalten während verchiedener Massnahmen zur Eindämmung der COVID-19-Pandemie.
  Die Darstellung erlaubt die Auswahl von Kalenderwochen und Verkehrsmodus und informiert jeweils kurz über den aktuellen Massnahmenkatalog in der Stadt Zürich. Die Symbole geben die exakten Zahlenwerte wieder, wenn angeklickt.
 
 <br><br>Die Werte basieren auf automatisierten Zählungen durch die Stadt Zürich, die von ebenjener auf statistische Fehlerquellen hin geprüft und korrigiert wurden. Es besteht kein Anspruch auf Vollständigkeit oder Gültigkeit der publizierten Daten seitens des Autors dieser Darstellung.
-  <br><br>Datenherkunft: Open Data Stadt Zürich <a href='https://data.stadt-zuerich.ch/dataset/sid_dav_verkehrszaehlung_miv_od2031/resource/44607195-a2ad-4f9b-b6f1-d26c003d85a2' target="_blank">Verkehrszählung MIV</a>, <a href='https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/b9308f85-9066-4f5b-8eab-344c790a6982' target="_blank">Verkehrszählung Fussgänger und Veloverkehr</a>
+  <br><br>Datenherkunft: Open Data Stadt Zürich <a href='https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/b9308f85-9066-4f5b-8eab-344c790a6982' target="_blank">Verkehrszählung Fussgänger und Veloverkehr</a>
   <br>Kontakt Autor: Ueli Isenschmid&nbsp;&nbsp;&nbsp;<a href='mailto:ueli.isenschmid@gmail.com'>Email</a>, <a href='https://www.linkedin.com/in/ueli-isenschmid/' target="_blank">Linkedin</a>
 
-</div>
+  </div>
 
 <!--- map object-->
 
@@ -66,8 +66,6 @@ aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs i
   <div class='session'>
     <h2>Verkehrsmodus</h2>
     <div class='row' id='filters'>
-      <input id='car' type='radio' name='toggle' value=3>
-      <label for='car'>Motorisierter Verkehr</label><br>
       <input id='ped' type='radio' name='toggle' value=1>
       <label for='ped'>Fussgänger</label><br>
       <input id='bike' type='radio' name='toggle' value=2>
@@ -176,18 +174,29 @@ map.addLayer({
     type: 'geojson',
     data: 'https://bountan.github.io/mobilitycovid/data/zuri.geojson'
     },
-
+/* from jupyter
+0.1     1244.9
+0.2     2020.6
+0.3     2871.7
+0.4     3945.4
+0.5     4928.5
+0.6     6506.2
+0.7     8695.1
+0.8    11477.8
+0.9    16021.0
+1.0    54733.0
+*/
   paint: {
     'circle-color': [
     'step',
     ['get', 'n'],
-    '#2d8ac0', 200,
-    '#559783', 500,
-    '#add8a4', 1000,
-    '#e4ea9a', 2000,
-    '#fae08a', 10000,
-    '#f9ae60', 40000,
-    '#f26b44', 75000,
+    '#2d8ac0', 1000,
+    '#559783', 2000,
+    '#add8a4', 4000,
+    '#e4ea9a', 6000,
+    '#fae08a', 8000,
+    '#f9ae60', 11000,
+    '#f26b44', 16000,
     '#d83d51'
     ],
 
@@ -196,36 +205,36 @@ map.addLayer({
         11, ['/',   ['step',
               ['get', 'n'],
 
-              2, 200,
-              4, 500,
-              6, 1000,
-              10, 2000,
-              12, 10000,
-              16, 40000,
-              20, 75000,
+              2, 1000,
+              4, 2000,
+              6, 4000,
+              10, 6000,
+              12, 8000,
+              16, 11000,
+              20, 16000,
               25
             ], 2],
         13, ['/', ['step',
               ['get', 'n'],
 
-              2, 200,
-              4, 500,
-              6, 1000,
-              10, 2000,
-              12, 10000,
-              16, 40000,
-              20, 75000,
+              2, 1000,
+              4, 2000,
+              6, 4000,
+              10, 6000,
+              12, 8000,
+              16, 11000,
+              20, 16000,
               25
             ], 0.7],
             15, ['/',   ['step',
                   ['get', 'n'],
-                  2, 200,
-                  4, 500,
-                  6, 1000,
-                  10, 2000,
-                  12, 10000,
-                  16, 40000,
-                  20, 75000,
+                  2, 1000,
+                  4, 2000,
+                  6, 4000,
+                  10, 6000,
+                  12, 8000,
+                  16, 11000,
+                  20, 16000,
                   25
                 ], 0.3],
       ],
@@ -236,7 +245,7 @@ map.addLayer({
 map.on('click', 'location', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Station"+e.features[0].properties.loc+"Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
+.setHTML("Station"+e.features[0].properties.loc+" Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
 .addTo(map);
 });
 // change cursor on hover sections
