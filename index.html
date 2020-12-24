@@ -29,7 +29,7 @@ aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs i
   <br><br>Datenherkunft: Open Data Stadt Zürich <a href='https://data.stadt-zuerich.ch/dataset/sid_dav_verkehrszaehlung_miv_od2031/resource/44607195-a2ad-4f9b-b6f1-d26c003d85a2' target="_blank">Verkehrszählung MIV</a>, <a href='https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/resource/b9308f85-9066-4f5b-8eab-344c790a6982' target="_blank">Verkehrszählung Fussgänger und Veloverkehr</a>
   <br>Kontakt Autor: Ueli Isenschmid&nbsp;&nbsp;&nbsp;<a href='mailto:ueli.isenschmid@gmail.com'>Email</a>, <a href='https://www.linkedin.com/in/ueli-isenschmid/' target="_blank">Linkedin</a>
 
-</div>
+  </div>
 
 <!--- map object-->
 
@@ -236,7 +236,7 @@ map.addLayer({
 map.on('click', 'location', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Station"+e.features[0].properties.loc+"Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
+.setHTML("Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
 .addTo(map);
 });
 // change cursor on hover sections
