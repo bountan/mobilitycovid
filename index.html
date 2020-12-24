@@ -20,7 +20,7 @@
 
 <!-- introtext -->
 <div id='headtext'>
-Diese Karte stellt die Frequenz von Fussgängern und Velofahrern verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020
+Diese Karte stellt die Frequenz von Fussgängern und Velofahrern an verschiedenen automatischen Zählstationen in der Stadt Zürich im Jahr 2020
 dar. Sie wurden in Viertelstunden-Intervallen gezählt, zum Zweck dieser Darstellung aber auf ganze Kalenderwochen
 aufsummiert. Ziel ist ein Überblick über die Frequenz des Individualverkehrs in Hinblick auf das Verhalten während verchiedener Massnahmen zur Eindämmung der COVID-19-Pandemie.
  Die Darstellung erlaubt die Auswahl von Kalenderwochen und Verkehrsmodus und informiert jeweils kurz über den aktuellen Massnahmenkatalog in der Stadt Zürich. Die Symbole geben die exakten Zahlenwerte wieder, wenn angeklickt.
@@ -174,7 +174,18 @@ map.addLayer({
     type: 'geojson',
     data: 'https://bountan.github.io/mobilitycovid/data/zuri.geojson'
     },
-
+/* from jupyter
+0.1     1244.9
+0.2     2020.6
+0.3     2871.7
+0.4     3945.4
+0.5     4928.5
+0.6     6506.2
+0.7     8695.1
+0.8    11477.8
+0.9    16021.0
+1.0    54733.0
+*/
   paint: {
     'circle-color': [
     'step',
