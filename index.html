@@ -245,7 +245,7 @@ map.addLayer({
 map.on('click', 'location', function(e) {
 new mapboxgl.Popup()
 .setLngLat(e.lngLat)
-.setHTML("Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
+.setHTML("Station"+e.features[0].properties.loc+" Total "+modetext+" in Kalenderwoche "+e.features[0].properties.wk+": <b>"+e.features[0].properties.n+"</b>")
 .addTo(map);
 });
 // change cursor on hover sections
