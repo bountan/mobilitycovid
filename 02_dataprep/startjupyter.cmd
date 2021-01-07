@@ -1,0 +1,1 @@
+jupyter notebook "C:\Users\bountan\Drive\UZH\GEO372 GIS V\UebungCOVIDMobility\02_dataprep\COVID_Mobility_ZH.ipynb"
